@@ -1,0 +1,1906 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+
+<meta charset="UTF-8" />
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+/>
+
+<title>Snake Chaos</title>
+
+<style>
+
+/* =========================================
+RESET
+========================================= */
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial, Helvetica, sans-serif;
+}
+
+/* =========================================
+BODY
+========================================= */
+
+body{
+
+  width:100%;
+  min-height:100vh;
+
+  overflow:hidden;
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  background:
+    radial-gradient(circle at top,#1e293b,#020617);
+
+  background-size:400% 400%;
+
+  animation:
+    bgMove 12s ease infinite;
+
+  color:white;
+}
+
+@keyframes bgMove{
+
+  0%{
+    background-position:0% 50%;
+  }
+
+  50%{
+    background-position:100% 50%;
+  }
+
+  100%{
+    background-position:0% 50%;
+  }
+}
+
+/* =========================================
+GAME WRAPPER
+========================================= */
+
+.game-wrapper{
+
+  width:100%;
+  height:100vh;
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  padding:20px;
+}
+
+/* =========================================
+GAME CONTAINER
+========================================= */
+
+.game-container{
+
+  position:relative;
+
+  overflow:hidden;
+
+  width:min(95vw,1000px);
+
+  padding:20px;
+
+  border-radius:30px;
+
+  border:
+    2px solid rgba(255,255,255,.08);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(15,23,42,.95),
+      rgba(30,41,59,.95)
+    );
+
+  box-shadow:
+    0 0 50px rgba(56,189,248,.15),
+    inset 0 0 40px rgba(255,255,255,.02);
+
+  backdrop-filter:blur(12px);
+}
+
+.game-container::before{
+
+  content:"";
+
+  position:absolute;
+
+  inset:0;
+
+  background:
+    linear-gradient(
+      120deg,
+      transparent,
+      rgba(255,255,255,.03),
+      transparent
+    );
+
+  animation:
+    shine 6s linear infinite;
+}
+
+@keyframes shine{
+
+  from{
+    transform:translateX(-100%);
+  }
+
+  to{
+    transform:translateX(100%);
+  }
+}
+
+/* =========================================
+HEADER
+========================================= */
+
+.header{
+
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  flex-wrap:wrap;
+
+  gap:15px;
+
+  margin-bottom:25px;
+}
+
+.logo{
+
+  font-size:2.5rem;
+
+  font-weight:900;
+
+  letter-spacing:1px;
+
+  color:#38bdf8;
+
+  text-shadow:
+    0 0 20px rgba(56,189,248,.5);
+}
+
+/* =========================================
+CARDS
+========================================= */
+
+.info{
+
+  display:flex;
+  gap:12px;
+
+  flex-wrap:wrap;
+}
+
+.card{
+
+  position:relative;
+
+  overflow:hidden;
+
+  min-width:120px;
+
+  padding:14px;
+
+  border-radius:18px;
+
+  text-align:center;
+
+  backdrop-filter:blur(12px);
+
+  transition:.3s;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,.06),
+      rgba(255,255,255,.03)
+    );
+
+  border:
+    1px solid rgba(255,255,255,.08);
+}
+
+.card:hover{
+
+  transform:
+    translateY(-4px);
+
+  box-shadow:
+    0 10px 25px rgba(0,0,0,.35);
+}
+
+.card span{
+
+  display:block;
+
+  opacity:.7;
+
+  margin-bottom:6px;
+
+  font-size:.8rem;
+}
+
+.card strong{
+
+  font-size:1.3rem;
+
+  color:#facc15;
+
+  text-shadow:
+    0 0 15px rgba(250,204,21,.4);
+}
+
+/* =========================================
+CANVAS
+========================================= */
+
+.canvas-wrapper{
+
+  width:100%;
+
+  display:flex;
+  justify-content:center;
+}
+
+canvas{
+
+  background:
+    linear-gradient(
+      135deg,
+      #07111f,
+      #0f172a
+    );
+
+  border-radius:25px;
+
+  border:
+    3px solid rgba(255,255,255,.08);
+
+  box-shadow:
+    0 0 30px rgba(0,0,0,.45),
+    inset 0 0 30px rgba(255,255,255,.02);
+}
+
+/* =========================================
+MODAL
+========================================= */
+
+.modal{
+
+  position:fixed;
+
+  inset:0;
+
+  background:
+    rgba(0,0,0,.8);
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  opacity:0;
+  pointer-events:none;
+
+  transition:.3s;
+
+  z-index:999;
+}
+
+.modal.active{
+
+  opacity:1;
+  pointer-events:all;
+}
+
+.modal-content{
+
+  width:min(95%,900px);
+
+  padding:35px;
+
+  border-radius:28px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(15,23,42,.98),
+      rgba(30,41,59,.98)
+    );
+
+  border:
+    2px solid rgba(255,255,255,.08);
+
+  box-shadow:
+    0 0 40px rgba(0,0,0,.45);
+
+  text-align:center;
+}
+
+.modal h2{
+
+  font-size:2.3rem;
+
+  margin-bottom:25px;
+
+  color:#38bdf8;
+
+  text-shadow:
+    0 0 15px rgba(56,189,248,.35);
+}
+
+/* =========================================
+TIMER
+========================================= */
+
+.modal-timer{
+
+  width:100%;
+  height:20px;
+
+  border-radius:999px;
+
+  overflow:hidden;
+
+  margin-bottom:30px;
+
+  background:
+    rgba(255,255,255,.06);
+
+  border:
+    1px solid rgba(255,255,255,.08);
+}
+
+.modal-timer-bar{
+
+  width:100%;
+  height:100%;
+
+  transition:1s linear;
+
+  background:
+    linear-gradient(
+      90deg,
+      #22c55e,
+      #facc15,
+      #ef4444
+    );
+
+  box-shadow:
+    0 0 15px rgba(34,197,94,.35);
+}
+
+/* =========================================
+OPTIONS
+========================================= */
+
+.options{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,1fr);
+
+  gap:15px;
+}
+
+.option-btn{
+
+  position:relative;
+
+  overflow:hidden;
+
+  min-height:140px;
+
+  border:none;
+
+  border-radius:24px;
+
+  padding:20px;
+
+  font-size:1.05rem;
+
+  font-weight:bold;
+
+  color:white;
+
+  cursor:pointer;
+
+  transition:.3s;
+
+  border:
+    2px solid rgba(255,255,255,.08);
+
+  box-shadow:
+    0 12px 25px rgba(0,0,0,.3);
+}
+
+.option-btn::before{
+
+  content:"";
+
+  position:absolute;
+
+  width:220px;
+  height:220px;
+
+  border-radius:50%;
+
+  background:
+    rgba(255,255,255,.08);
+
+  top:-90px;
+  right:-90px;
+}
+
+.option-btn:nth-child(1){
+
+  background:
+    linear-gradient(
+      135deg,
+      #ef4444,
+      #b91c1c
+    );
+}
+
+.option-btn:nth-child(2){
+
+  background:
+    linear-gradient(
+      135deg,
+      #2563eb,
+      #1d4ed8
+    );
+}
+
+.option-btn:nth-child(3){
+
+  background:
+    linear-gradient(
+      135deg,
+      #22c55e,
+      #15803d
+    );
+}
+
+.option-btn:hover{
+
+  transform:
+    translateY(-6px)
+    scale(1.02);
+
+  filter:brightness(1.08);
+
+  box-shadow:
+    0 18px 35px rgba(0,0,0,.45);
+}
+
+/* =========================================
+OVERLAY
+========================================= */
+
+.overlay{
+
+  position:fixed;
+
+  inset:0;
+
+  background:
+    rgba(0,0,0,.92);
+
+  backdrop-filter:blur(10px);
+
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+
+  gap:20px;
+
+  opacity:0;
+  pointer-events:none;
+
+  transition:.3s;
+
+  z-index:2000;
+}
+
+.overlay.active{
+
+  opacity:1;
+  pointer-events:all;
+}
+
+.overlay h1{
+
+  font-size:4rem;
+
+  text-shadow:
+    0 0 25px rgba(239,68,68,.5);
+
+  animation:
+    pulse 1.5s infinite;
+}
+
+@keyframes pulse{
+
+  0%{
+    transform:scale(1);
+  }
+
+  50%{
+    transform:scale(1.05);
+  }
+
+  100%{
+    transform:scale(1);
+  }
+}
+
+.restart-btn{
+
+  border:none;
+
+  border-radius:18px;
+
+  padding:18px 28px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #38bdf8,
+      #2563eb
+    );
+
+  color:white;
+
+  font-size:1rem;
+
+  font-weight:bold;
+
+  cursor:pointer;
+
+  transition:.3s;
+
+  box-shadow:
+    0 10px 25px rgba(37,99,235,.35);
+}
+
+.restart-btn:hover{
+
+  transform:
+    translateY(-5px)
+    scale(1.03);
+}
+
+/* =========================================
+POPUP EFEITO
+========================================= */
+
+.effect-popup{
+
+  position:fixed;
+
+  top:30px;
+  left:50%;
+
+  transform:
+    translateX(-50%);
+
+  min-width:350px;
+
+  padding:22px;
+
+  border-radius:22px;
+
+  z-index:3000;
+
+  text-align:center;
+
+  backdrop-filter:blur(12px);
+
+  border:
+    2px solid rgba(255,255,255,.08);
+
+  opacity:0;
+
+  pointer-events:none;
+
+  transition:.4s;
+
+  box-shadow:
+    0 15px 40px rgba(0,0,0,.45);
+}
+
+.effect-popup.active{
+
+  opacity:1;
+
+  transform:
+    translateX(-50%)
+    translateY(10px);
+}
+
+.effect-popup.success{
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(34,197,94,.95),
+      rgba(21,128,61,.95)
+    );
+}
+
+.effect-popup.error{
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(239,68,68,.95),
+      rgba(185,28,28,.95)
+    );
+}
+
+.effect-popup h3{
+
+  font-size:1.8rem;
+
+  margin-bottom:10px;
+}
+
+.effect-popup p{
+
+  font-size:1rem;
+
+  line-height:1.5;
+}
+
+/* =========================================
+DARKNESS
+========================================= */
+
+.darkness{
+
+  position:fixed;
+
+  inset:0;
+
+  background:black;
+
+  opacity:0;
+
+  pointer-events:none;
+
+  transition:.5s;
+
+  z-index:1500;
+}
+
+/* =========================================
+RESPONSIVO
+========================================= */
+
+@media(max-width:900px){
+
+  .options{
+
+    grid-template-columns:1fr;
+  }
+}
+
+/* =========================================
+CELULAR
+========================================= */
+
+@media(max-width:768px){
+
+  body{
+
+    transform:rotate(90deg);
+
+    transform-origin:center center;
+
+    width:100vh;
+    height:100vw;
+
+    overflow:hidden;
+
+    position:absolute;
+
+    top:50%;
+    left:50%;
+
+    margin-top:-50vw;
+    margin-left:-50vh;
+  }
+
+  .game-container{
+
+    width:92vh;
+  }
+
+  canvas{
+
+    width:80vh !important;
+    height:45vh !important;
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="game-wrapper">
+
+  <div class="game-container">
+
+    <div class="header">
+
+      <div class="logo">
+        🐍 Snake Chaos
+      </div>
+
+      <div class="info">
+
+        <div class="card">
+          <span>Pontos</span>
+          <strong id="scoreText">0</strong>
+        </div>
+
+        <div class="card">
+          <span>Tamanho</span>
+          <strong id="sizeText">3</strong>
+        </div>
+
+        <div class="card">
+          <span>Dificuldade</span>
+          <strong>DIFÍCIL</strong>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="canvas-wrapper">
+      <canvas
+        id="game"
+        width="900"
+        height="500">
+      </canvas>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- MODAL -->
+<div
+  class="modal"
+  id="questionModal">
+
+  <div class="modal-content">
+
+    <h2 id="questionText"></h2>
+
+    <div class="modal-timer">
+      <div
+        class="modal-timer-bar"
+        id="modalTimerBar">
+      </div>
+    </div>
+
+    <div
+      class="options"
+      id="optionsContainer">
+    </div>
+
+  </div>
+
+</div>
+
+<!-- GAME OVER -->
+<div
+  class="overlay"
+  id="overlay">
+
+  <h1>💀 GAME OVER</h1>
+
+  <p id="finalScore"></p>
+
+  <button
+    class="restart-btn"
+    onclick="location.reload()">
+
+    Jogar Novamente
+
+  </button>
+
+</div>
+
+<!-- POPUP -->
+<div
+  class="effect-popup"
+  id="effectPopup">
+
+  <h3 id="effectTitle"></h3>
+
+  <p id="effectDescription"></p>
+
+</div>
+
+<div
+  class="darkness"
+  id="darkness">
+</div>
+
+<script>
+    class SnakeChaos {
+
+  constructor(){
+
+    this.canvas =
+      document.getElementById("game");
+
+    this.ctx =
+      this.canvas.getContext("2d");
+
+    this.grid = 25;
+
+    this.winScore = 300;
+
+    this.score = 0;
+
+    this.baseSnakeSize = 3;
+
+    this.doublePoints = false;
+
+    this.reverseControls = false;
+
+    this.speed = 60;
+
+    this.gameRunning = false;
+
+    /*
+    evita múltiplos loops
+    */
+
+    this.loopRunning = false;
+
+    this.loopTimeout = null;
+
+    this.snake = [
+
+      {x:200,y:200},
+      {x:175,y:200},
+      {x:150,y:200}
+
+    ];
+
+    this.dx = this.grid;
+    this.dy = 0;
+
+    this.food =
+      this.randomPosition();
+
+    this.magicBox = null;
+
+    this.obstacles = [];
+
+    this.questions = [
+
+      {
+        question:"Qual linguagem roda no navegador?",
+
+        options:[
+          "JavaScript",
+          "Python",
+          "Java"
+        ],
+
+        correct:"JavaScript"
+      },
+
+      {
+        question:"HTML é usado para?",
+
+        options:[
+          "Estrutura",
+          "Banco de dados",
+          "Servidor"
+        ],
+
+        correct:"Estrutura"
+      },
+
+      {
+        question:"CSS serve para?",
+
+        options:[
+          "Estilizar",
+          "Compilar",
+          "Criptografar"
+        ],
+
+        correct:"Estilizar"
+      }
+
+    ];
+
+    this.createCountdown();
+
+    this.createObstacles();
+
+    this.init();
+
+    this.startMagicBoxSpawner();
+  }
+
+  /* =========================================
+  INIT
+  ========================================= */
+
+  init(){
+
+    document.addEventListener(
+      "keydown",
+      (e)=>this.changeDirection(e)
+    );
+
+    this.startCountdown(()=>{
+
+      this.gameRunning = true;
+
+      this.gameLoop();
+
+    });
+  }
+
+  /* =========================================
+  CONTAGEM
+  ========================================= */
+
+  createCountdown(){
+
+    const countdown =
+      document.createElement("div");
+
+    countdown.id = "countdown";
+
+    countdown.style.position = "fixed";
+    countdown.style.inset = "0";
+    countdown.style.display = "flex";
+    countdown.style.justifyContent = "center";
+    countdown.style.alignItems = "center";
+    countdown.style.fontSize = "8rem";
+    countdown.style.fontWeight = "900";
+    countdown.style.color = "white";
+    countdown.style.zIndex = "5000";
+    countdown.style.background = "rgba(0,0,0,.45)";
+    countdown.style.backdropFilter = "blur(8px)";
+    countdown.style.textShadow =
+      "0 0 30px rgba(56,189,248,.8)";
+    countdown.style.opacity = "0";
+    countdown.style.transition = ".3s";
+
+    document.body.appendChild(
+      countdown
+    );
+  }
+
+  startCountdown(callback){
+
+    const countdown =
+      document.getElementById(
+        "countdown"
+      );
+
+    let count = 3;
+
+    countdown.style.opacity = "1";
+
+    countdown.textContent = count;
+
+    const interval =
+      setInterval(()=>{
+
+        count--;
+
+        if(count > 0){
+
+          countdown.textContent =
+            count;
+
+        }else{
+
+          clearInterval(interval);
+
+          countdown.textContent =
+            "GO!";
+
+          setTimeout(()=>{
+
+            countdown.style.opacity =
+              "0";
+
+            callback();
+
+          },700);
+        }
+
+      },1000);
+  }
+
+  /* =========================================
+  POSIÇÃO
+  ========================================= */
+
+  randomPosition(){
+
+    return {
+
+      x:
+        Math.floor(
+          Math.random() *
+          (this.canvas.width / this.grid)
+        ) * this.grid,
+
+      y:
+        Math.floor(
+          Math.random() *
+          (this.canvas.height / this.grid)
+        ) * this.grid
+    };
+  }
+
+  /* =========================================
+  OBSTÁCULOS
+  ========================================= */
+
+  createObstacles(){
+
+    for(let i=0;i<12;i++){
+
+      this.obstacles.push(
+        this.randomPosition()
+      );
+    }
+  }
+
+  /* =========================================
+  DIREÇÃO
+  ========================================= */
+
+  changeDirection(e){
+
+    let key = e.key;
+
+    if(this.reverseControls){
+
+      if(key === "ArrowRight")
+        key = "ArrowLeft";
+
+      else if(key === "ArrowLeft")
+        key = "ArrowRight";
+
+      else if(key === "ArrowUp")
+        key = "ArrowDown";
+
+      else if(key === "ArrowDown")
+        key = "ArrowUp";
+    }
+
+    if(
+      key === "ArrowUp" &&
+      this.dy === 0
+    ){
+
+      this.dx = 0;
+      this.dy = -this.grid;
+    }
+
+    if(
+      key === "ArrowDown" &&
+      this.dy === 0
+    ){
+
+      this.dx = 0;
+      this.dy = this.grid;
+    }
+
+    if(
+      key === "ArrowLeft" &&
+      this.dx === 0
+    ){
+
+      this.dx = -this.grid;
+      this.dy = 0;
+    }
+
+    if(
+      key === "ArrowRight" &&
+      this.dx === 0
+    ){
+
+      this.dx = this.grid;
+      this.dy = 0;
+    }
+  }
+
+  /* =========================================
+  LOOP
+  ========================================= */
+
+  gameLoop(){
+
+    if(this.loopRunning)
+      return;
+
+    this.loopRunning = true;
+
+    const loop = ()=>{
+
+      if(!this.gameRunning){
+
+        this.loopRunning = false;
+
+        return;
+      }
+
+      this.update();
+
+      this.draw();
+
+      this.loopTimeout = setTimeout(()=>{
+
+        requestAnimationFrame(loop);
+
+      },this.speed);
+    };
+
+    loop();
+  }
+
+  /* =========================================
+  UPDATE
+  ========================================= */
+
+  update(){
+
+    /*
+    vitória
+    */
+
+    if(this.score >= this.winScore){
+
+      this.winGame();
+
+      return;
+    }
+
+    const head = {
+
+      x:this.snake[0].x + this.dx,
+
+      y:this.snake[0].y + this.dy
+    };
+
+    /*
+    parede
+    */
+
+    if(
+      head.x < 0 ||
+      head.y < 0 ||
+      head.x >= this.canvas.width ||
+      head.y >= this.canvas.height
+    ){
+
+      this.gameOver();
+
+      return;
+    }
+
+    /*
+    corpo
+    */
+
+    for(let part of this.snake){
+
+      if(
+        head.x === part.x &&
+        head.y === part.y
+      ){
+
+        this.gameOver();
+
+        return;
+      }
+    }
+
+    /*
+    obstáculos
+    */
+
+    for(let obstacle of this.obstacles){
+
+      if(
+        head.x === obstacle.x &&
+        head.y === obstacle.y
+      ){
+
+        this.gameOver();
+
+        return;
+      }
+    }
+
+    this.snake.unshift(head);
+
+    /*
+    fruta
+    */
+
+    if(
+      head.x === this.food.x &&
+      head.y === this.food.y
+    ){
+
+      this.food =
+        this.randomPosition();
+
+      this.score +=
+        this.doublePoints
+        ? 20
+        : 10;
+
+    }else{
+
+      this.snake.pop();
+    }
+
+    /*
+    caixa mágica
+    */
+
+    if(
+      this.magicBox &&
+      head.x === this.magicBox.x &&
+      head.y === this.magicBox.y
+    ){
+
+      this.magicBox = null;
+
+      this.openQuestion();
+    }
+
+    this.updateUI();
+  }
+
+  /* =========================================
+  DRAW
+  ========================================= */
+
+  draw(){
+
+    this.ctx.clearRect(
+      0,
+      0,
+      this.canvas.width,
+      this.canvas.height
+    );
+
+    /*
+    obstáculos
+    */
+
+    this.ctx.fillStyle = "#64748b";
+
+    this.obstacles.forEach((o)=>{
+
+      this.ctx.fillRect(
+        o.x,
+        o.y,
+        this.grid,
+        this.grid
+      );
+    });
+
+    /*
+    fruta
+    */
+
+    this.ctx.fillStyle = "#ef4444";
+
+    this.ctx.beginPath();
+
+    this.ctx.arc(
+      this.food.x + 12,
+      this.food.y + 12,
+      10,
+      0,
+      Math.PI * 2
+    );
+
+    this.ctx.fill();
+
+    /*
+    caixa mágica
+    */
+
+    if(this.magicBox){
+
+      this.ctx.fillStyle = "#facc15";
+
+      this.ctx.fillRect(
+        this.magicBox.x,
+        this.magicBox.y,
+        this.grid,
+        this.grid
+      );
+    }
+
+    /*
+    cobra
+    */
+
+    this.snake.forEach((part,index)=>{
+
+      this.ctx.fillStyle =
+        index === 0
+        ? "#22c55e"
+        : "#16a34a";
+
+      this.ctx.fillRect(
+        part.x,
+        part.y,
+        this.grid,
+        this.grid
+      );
+    });
+  }
+
+  /* =========================================
+  MAGIC BOX
+  ========================================= */
+
+  startMagicBoxSpawner(){
+
+    setInterval(()=>{
+
+      if(
+        this.magicBox ||
+        !this.gameRunning
+      ) return;
+
+      this.magicBox =
+        this.randomPosition();
+
+      setTimeout(()=>{
+
+        this.magicBox = null;
+
+      },5000);
+
+    },12000);
+  }
+
+  /* =========================================
+  MODAL
+  ========================================= */
+
+  openQuestion(){
+
+    this.gameRunning = false;
+
+    clearTimeout(this.loopTimeout);
+
+    const modal =
+      document.getElementById(
+        "questionModal"
+      );
+
+    modal.classList.add("active");
+
+    const q =
+      this.questions[
+        Math.floor(
+          Math.random() *
+          this.questions.length
+        )
+      ];
+
+    document.getElementById(
+      "questionText"
+    ).textContent =
+      q.question;
+
+    const optionsContainer =
+      document.getElementById(
+        "optionsContainer"
+      );
+
+    optionsContainer.innerHTML = "";
+
+    q.options.forEach((option)=>{
+
+      const btn =
+        document.createElement("button");
+
+      btn.className =
+        "option-btn";
+
+      btn.textContent =
+        option;
+
+      btn.onclick = ()=>{
+
+        clearInterval(timer);
+
+        modal.classList.remove(
+          "active"
+        );
+
+        if(option === q.correct){
+
+          this.applyBuff();
+
+        }else{
+
+          this.applyDebuff();
+        }
+
+        this.startCountdown(()=>{
+
+          this.gameRunning = true;
+
+          this.gameLoop();
+
+        });
+      };
+
+      optionsContainer.appendChild(
+        btn
+      );
+    });
+
+    /*
+    timer
+    */
+
+    let time = 8;
+
+    const bar =
+      document.getElementById(
+        "modalTimerBar"
+      );
+
+    bar.style.width = "100%";
+
+    const timer =
+      setInterval(()=>{
+
+        time--;
+
+        bar.style.width =
+          `${(time / 8) * 100}%`;
+
+        if(time <= 0){
+
+          clearInterval(timer);
+
+          modal.classList.remove(
+            "active"
+          );
+
+          this.applyDebuff();
+
+          this.startCountdown(()=>{
+
+            this.gameRunning = true;
+
+            this.gameLoop();
+
+          });
+        }
+
+      },1000);
+  }
+
+  /* =========================================
+  POPUP
+  ========================================= */
+
+  showEffectPopup(success,text){
+
+    const popup =
+      document.getElementById(
+        "effectPopup"
+      );
+
+    const title =
+      document.getElementById(
+        "effectTitle"
+      );
+
+    const description =
+      document.getElementById(
+        "effectDescription"
+      );
+
+    popup.className =
+      "effect-popup";
+
+    popup.classList.add(
+      success
+      ? "success"
+      : "error"
+    );
+
+    title.textContent =
+      success
+      ? "✅ Resposta Correta!"
+      : "❌ Resposta Errada!";
+
+    description.textContent =
+      text;
+
+    popup.classList.add(
+      "active"
+    );
+
+    setTimeout(()=>{
+
+      popup.classList.remove(
+        "active"
+      );
+
+    },3500);
+  }
+
+  /* =========================================
+  BENEFÍCIOS
+  ========================================= */
+
+  applyBuff(){
+
+    const buffs = [
+
+      {
+
+        text:
+          "🐢 Cobra 10% mais lenta",
+
+        action:()=>{
+
+          this.speed =
+            Math.min(
+              this.speed * 1.1,
+              140
+            );
+        }
+      },
+
+      {
+
+        text:
+          "💥 Um obstáculo desapareceu",
+
+        action:()=>{
+
+          if(this.obstacles.length > 0){
+
+            this.obstacles.splice(
+
+              Math.floor(
+                Math.random() *
+                this.obstacles.length
+              ),
+
+              1
+            );
+          }
+        }
+      },
+
+      {
+
+        text:
+          "✂️ Cobra perdeu 20% do tamanho",
+
+        action:()=>{
+
+          const minimum =
+            this.baseSnakeSize;
+
+          const remove =
+            Math.floor(
+              this.snake.length * 0.2
+            );
+
+          if(
+            this.snake.length - remove >
+            minimum
+          ){
+
+            this.snake.splice(
+              this.snake.length - remove,
+              remove
+            );
+          }
+        }
+      },
+
+      {
+
+        text:
+          "✨ Pontuação dobrada por 15 segundos",
+
+        action:()=>{
+
+          this.doublePoints = true;
+
+          setTimeout(()=>{
+
+            this.doublePoints = false;
+
+          },15000);
+        }
+      }
+
+    ];
+
+    const selected =
+      buffs[
+        Math.floor(
+          Math.random() *
+          buffs.length
+        )
+      ];
+
+    selected.action();
+
+    this.showEffectPopup(
+      true,
+      selected.text
+    );
+  }
+
+  /* =========================================
+  MALEFÍCIOS
+  ========================================= */
+
+  applyDebuff(){
+
+    const debuffs = [
+
+      {
+
+        text:
+          "⚡ Cobra 30% mais rápida",
+
+        action:()=>{
+
+          this.speed =
+            Math.max(
+              this.speed * 0.7,
+              25
+            );
+        }
+      },
+
+      {
+
+        text:
+          "🌀 Controles invertidos por 15 segundos",
+
+        action:()=>{
+
+          this.reverseControls =
+            true;
+
+          setTimeout(()=>{
+
+            this.reverseControls =
+              false;
+
+          },15000);
+        }
+      },
+
+      {
+
+        text:
+          "🐍 Cobra aumentou 50%",
+
+        action:()=>{
+
+          const grow =
+            Math.floor(
+              this.snake.length * 0.5
+            );
+
+          for(let i=0;i<grow;i++){
+
+            this.snake.push({
+
+              ...this.snake[
+                this.snake.length - 1
+              ]
+
+            });
+          }
+        }
+      },
+
+      {
+
+        text:
+          "🌑 Tela escurecendo constantemente",
+
+        action:()=>{
+
+          const darkness =
+            document.getElementById(
+              "darkness"
+            );
+
+          const interval =
+            setInterval(()=>{
+
+              darkness.style.opacity = 1;
+
+              setTimeout(()=>{
+
+                darkness.style.opacity = 0;
+
+              },2000);
+
+            },5000);
+
+          setTimeout(()=>{
+
+            clearInterval(interval);
+
+            darkness.style.opacity = 0;
+
+          },25000);
+        }
+      }
+
+    ];
+
+    const selected =
+      debuffs[
+        Math.floor(
+          Math.random() *
+          debuffs.length
+        )
+      ];
+
+    selected.action();
+
+    this.showEffectPopup(
+      false,
+      selected.text
+    );
+  }
+
+  /* =========================================
+  UI
+  ========================================= */
+
+  updateUI(){
+
+    document.getElementById(
+      "scoreText"
+    ).textContent =
+      this.score;
+
+    document.getElementById(
+      "sizeText"
+    ).textContent =
+      this.snake.length;
+  }
+
+  /* =========================================
+  GAME OVER
+  ========================================= */
+
+  gameOver(){
+
+    this.gameRunning = false;
+
+    clearTimeout(this.loopTimeout);
+
+    const overlay =
+      document.getElementById(
+        "overlay"
+      );
+
+    overlay.classList.add(
+      "active"
+    );
+
+    document.querySelector(
+      ".overlay h1"
+    ).innerHTML =
+      "💀 GAME OVER";
+
+    document.getElementById(
+      "finalScore"
+    ).innerHTML =
+
+      `
+      Pontuação final:
+      ${this.score}
+      `;
+  }
+
+  /* =========================================
+  VITÓRIA
+  ========================================= */
+
+  winGame(){
+
+    this.gameRunning = false;
+
+    clearTimeout(this.loopTimeout);
+
+    const overlay =
+      document.getElementById(
+        "overlay"
+      );
+
+    overlay.classList.add(
+      "active"
+    );
+
+    document.querySelector(
+      ".overlay h1"
+    ).innerHTML =
+      "🏆 PARABÉNS!";
+
+    document.getElementById(
+      "finalScore"
+    ).innerHTML =
+
+      `
+      Você completou o desafio!
+      <br><br>
+
+      Código desbloqueado:
+      <br><br>
+
+      <strong style="
+        font-size:3rem;
+        color:#38bdf8;
+        text-shadow:
+          0 0 25px rgba(56,189,248,.8);
+      ">
+        Testes
+      </strong>
+      `;
+  }
+}
+
+new SnakeChaos();
+</script>
+</body>
+</html>
