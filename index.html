@@ -6,7 +6,13 @@
 
 <meta
   name="viewport"
-  content="width=device-width, initial-scale=1.0"
+  content="
+    width=device-width,
+    initial-scale=1.0,
+    maximum-scale=1.0,
+    user-scalable=no,
+    viewport-fit=cover
+  "
 />
 
 <title>Snake Chaos</title>
@@ -25,15 +31,39 @@ RESET
 }
 
 /* =========================================
+HTML / BODY
+========================================= */
+
+html,
+body{
+
+  width:100%;
+  height:100%;
+
+  overflow:hidden;
+
+  overscroll-behavior:none;
+
+  touch-action:none;
+
+  user-select:none;
+
+  -webkit-user-select:none;
+
+  -webkit-touch-callout:none;
+
+  -webkit-tap-highlight-color:transparent;
+
+  background:#020617;
+
+  color:white;
+}
+
+/* =========================================
 BODY
 ========================================= */
 
 body{
-
-  width:100%;
-  min-height:100vh;
-
-  overflow:hidden;
 
   display:flex;
   justify-content:center;
@@ -46,8 +76,6 @@ body{
 
   animation:
     bgMove 12s ease infinite;
-
-  color:white;
 }
 
 @keyframes bgMove{
@@ -66,13 +94,73 @@ body{
 }
 
 /* =========================================
+ROTATE WARNING
+========================================= */
+
+.rotate-warning{
+
+  display:none;
+
+  position:fixed;
+
+  inset:0;
+
+  background:#020617;
+
+  z-index:99999;
+
+  flex-direction:column;
+
+  justify-content:center;
+
+  align-items:center;
+
+  text-align:center;
+
+  padding:30px;
+}
+
+.rotate-warning h1{
+
+  font-size:2.5rem;
+
+  margin-bottom:20px;
+
+  color:#38bdf8;
+}
+
+.rotate-warning p{
+
+  font-size:1.2rem;
+
+  opacity:.8;
+
+  line-height:1.6;
+}
+
+/* =========================================
+MOSTRA AVISO EM PÉ
+========================================= */
+
+@media (orientation: portrait){
+
+  .rotate-warning{
+    display:flex;
+  }
+
+  .game-wrapper{
+    display:none;
+  }
+}
+
+/* =========================================
 GAME WRAPPER
 ========================================= */
 
 .game-wrapper{
 
   width:100%;
-  height:100vh;
+  height:100%;
 
   display:flex;
   justify-content:center;
@@ -154,7 +242,9 @@ HEADER
 .header{
 
   display:flex;
+
   justify-content:space-between;
+
   align-items:center;
 
   flex-wrap:wrap;
@@ -179,12 +269,13 @@ HEADER
 }
 
 /* =========================================
-CARDS
+INFO
 ========================================= */
 
 .info{
 
   display:flex;
+
   gap:12px;
 
   flex-wrap:wrap;
@@ -219,15 +310,6 @@ CARDS
     1px solid rgba(255,255,255,.08);
 }
 
-.card:hover{
-
-  transform:
-    translateY(-4px);
-
-  box-shadow:
-    0 10px 25px rgba(0,0,0,.35);
-}
-
 .card span{
 
   display:block;
@@ -244,9 +326,6 @@ CARDS
   font-size:1.3rem;
 
   color:#facc15;
-
-  text-shadow:
-    0 0 15px rgba(250,204,21,.4);
 }
 
 /* =========================================
@@ -258,10 +337,17 @@ CANVAS
   width:100%;
 
   display:flex;
+
   justify-content:center;
 }
 
 canvas{
+
+  width:100%;
+
+  max-width:900px;
+
+  aspect-ratio:16/9;
 
   background:
     linear-gradient(
@@ -278,6 +364,14 @@ canvas{
   box-shadow:
     0 0 30px rgba(0,0,0,.45),
     inset 0 0 30px rgba(255,255,255,.02);
+
+  touch-action:none;
+
+  -webkit-touch-callout:none;
+
+  user-select:none;
+
+  -webkit-user-select:none;
 }
 
 /* =========================================
@@ -294,7 +388,9 @@ MODAL
     rgba(0,0,0,.8);
 
   display:flex;
+
   justify-content:center;
+
   align-items:center;
 
   opacity:0;
@@ -331,22 +427,16 @@ MODAL
   border:
     2px solid rgba(255,255,255,.08);
 
-  box-shadow:
-    0 0 40px rgba(0,0,0,.45);
-
   text-align:center;
 }
 
 .modal h2{
 
-  font-size:2.3rem;
+  font-size:2rem;
 
   margin-bottom:25px;
 
   color:#38bdf8;
-
-  text-shadow:
-    0 0 15px rgba(56,189,248,.35);
 }
 
 /* =========================================
@@ -356,6 +446,7 @@ TIMER
 .modal-timer{
 
   width:100%;
+
   height:20px;
 
   border-radius:999px;
@@ -366,14 +457,12 @@ TIMER
 
   background:
     rgba(255,255,255,.06);
-
-  border:
-    1px solid rgba(255,255,255,.08);
 }
 
 .modal-timer-bar{
 
   width:100%;
+
   height:100%;
 
   transition:1s linear;
@@ -385,9 +474,6 @@ TIMER
       #facc15,
       #ef4444
     );
-
-  box-shadow:
-    0 0 15px rgba(34,197,94,.35);
 }
 
 /* =========================================
@@ -406,10 +492,6 @@ OPTIONS
 
 .option-btn{
 
-  position:relative;
-
-  overflow:hidden;
-
   min-height:140px;
 
   border:none;
@@ -418,7 +500,7 @@ OPTIONS
 
   padding:20px;
 
-  font-size:1.05rem;
+  font-size:1rem;
 
   font-weight:bold;
 
@@ -427,32 +509,6 @@ OPTIONS
   cursor:pointer;
 
   transition:.3s;
-
-  border:
-    2px solid rgba(255,255,255,.08);
-
-  box-shadow:
-    0 12px 25px rgba(0,0,0,.3);
-}
-
-.option-btn::before{
-
-  content:"";
-
-  position:absolute;
-
-  width:220px;
-  height:220px;
-
-  border-radius:50%;
-
-  background:
-    rgba(255,255,255,.08);
-
-  top:-90px;
-  right:-90px;
-
-  pointer-events:none;
 }
 
 .option-btn:nth-child(1){
@@ -488,13 +544,7 @@ OPTIONS
 .option-btn:hover{
 
   transform:
-    translateY(-6px)
-    scale(1.02);
-
-  filter:brightness(1.08);
-
-  box-shadow:
-    0 18px 35px rgba(0,0,0,.45);
+    scale(1.03);
 }
 
 /* =========================================
@@ -513,8 +563,11 @@ OVERLAY
   backdrop-filter:blur(10px);
 
   display:flex;
+
   flex-direction:column;
+
   justify-content:center;
+
   align-items:center;
 
   gap:20px;
@@ -538,27 +591,6 @@ OVERLAY
 .overlay h1{
 
   font-size:4rem;
-
-  text-shadow:
-    0 0 25px rgba(239,68,68,.5);
-
-  animation:
-    pulse 1.5s infinite;
-}
-
-@keyframes pulse{
-
-  0%{
-    transform:scale(1);
-  }
-
-  50%{
-    transform:scale(1.05);
-  }
-
-  100%{
-    transform:scale(1);
-  }
 }
 
 .restart-btn{
@@ -583,18 +615,6 @@ OVERLAY
   font-weight:bold;
 
   cursor:pointer;
-
-  transition:.3s;
-
-  box-shadow:
-    0 10px 25px rgba(37,99,235,.35);
-}
-
-.restart-btn:hover{
-
-  transform:
-    translateY(-5px)
-    scale(1.03);
 }
 
 /* =========================================
@@ -606,6 +626,7 @@ POPUP
   position:fixed;
 
   top:30px;
+
   left:50%;
 
   transform:
@@ -621,19 +642,11 @@ POPUP
 
   text-align:center;
 
-  backdrop-filter:blur(12px);
-
-  border:
-    2px solid rgba(255,255,255,.08);
-
   opacity:0;
 
   pointer-events:none;
 
   transition:.4s;
-
-  box-shadow:
-    0 15px 40px rgba(0,0,0,.45);
 }
 
 .effect-popup.active{
@@ -665,20 +678,6 @@ POPUP
     );
 }
 
-.effect-popup h3{
-
-  font-size:1.8rem;
-
-  margin-bottom:10px;
-}
-
-.effect-popup p{
-
-  font-size:1rem;
-
-  line-height:1.5;
-}
-
 /* =========================================
 DARKNESS
 ========================================= */
@@ -701,14 +700,6 @@ DARKNESS
 }
 
 /* =========================================
-COUNTDOWN
-========================================= */
-
-#countdown{
-  pointer-events:none;
-}
-
-/* =========================================
 RESPONSIVO
 ========================================= */
 
@@ -718,43 +709,15 @@ RESPONSIVO
 
     grid-template-columns:1fr;
   }
-}
 
-/* =========================================
-CELULAR
-========================================= */
+  .logo{
 
-@media(max-width:768px){
-
-  body{
-
-    transform:rotate(90deg);
-
-    transform-origin:center center;
-
-    width:100vh;
-    height:100vw;
-
-    overflow:hidden;
-
-    position:absolute;
-
-    top:50%;
-    left:50%;
-
-    margin-top:-50vw;
-    margin-left:-50vh;
+    font-size:2rem;
   }
 
-  .game-container{
+  .overlay h1{
 
-    width:92vh;
-  }
-
-  canvas{
-
-    width:80vh !important;
-    height:45vh !important;
+    font-size:2.5rem;
   }
 }
 
@@ -762,6 +725,24 @@ CELULAR
 </head>
 
 <body>
+
+<!-- AVISO ROTAÇÃO -->
+
+<div class="rotate-warning">
+
+  <h1>
+    📱 Vire o Celular
+  </h1>
+
+  <p>
+    Este jogo foi desenvolvido
+    para funcionar no modo
+    horizontal.
+  </p>
+
+</div>
+
+<!-- GAME -->
 
 <div class="game-wrapper">
 
@@ -785,21 +766,18 @@ CELULAR
           <strong id="sizeText">3</strong>
         </div>
 
-        <div class="card">
-          <span>Dificuldade</span>
-          <strong>DIFÍCIL</strong>
-        </div>
-
       </div>
 
     </div>
 
     <div class="canvas-wrapper">
+
       <canvas
         id="game"
         width="900"
         height="500">
       </canvas>
+
     </div>
 
   </div>
@@ -807,6 +785,7 @@ CELULAR
 </div>
 
 <!-- MODAL -->
+
 <div
   class="modal"
   id="questionModal">
@@ -816,10 +795,12 @@ CELULAR
     <h2 id="questionText"></h2>
 
     <div class="modal-timer">
+
       <div
         class="modal-timer-bar"
         id="modalTimerBar">
       </div>
+
     </div>
 
     <div
@@ -831,7 +812,8 @@ CELULAR
 
 </div>
 
-<!-- GAME OVER -->
+<!-- OVERLAY -->
+
 <div
   class="overlay"
   id="overlay">
@@ -851,6 +833,7 @@ CELULAR
 </div>
 
 <!-- POPUP -->
+
 <div
   class="effect-popup"
   id="effectPopup">
@@ -868,41 +851,125 @@ CELULAR
 
 <script>
 
-class SnakeChaos {
+/* =========================================
+BLOQUEIOS MOBILE
+========================================= */
+
+window.addEventListener(
+
+  "touchmove",
+
+  (e)=>{
+
+    e.preventDefault();
+
+  },
+
+  {
+    passive:false
+  }
+);
+
+document.addEventListener(
+
+  "touchstart",
+
+  (e)=>{
+
+    if(e.touches.length > 1){
+
+      e.preventDefault();
+    }
+  },
+
+  {
+    passive:false
+  }
+);
+
+let lastTouchEnd = 0;
+
+document.addEventListener(
+
+  "touchend",
+
+  (event)=>{
+
+    const now = Date.now();
+
+    if(now - lastTouchEnd <= 300){
+
+      event.preventDefault();
+    }
+
+    lastTouchEnd = now;
+
+  },
+
+  false
+);
+
+/* =========================================
+ORIENTATION LOCK
+========================================= */
+
+async function lockLandscape(){
+
+  try{
+
+    if(screen.orientation?.lock){
+
+      await screen.orientation.lock(
+        "landscape"
+      );
+    }
+
+  }catch(err){
+
+    console.log(
+      "Orientation lock não suportado"
+    );
+  }
+}
+
+document.body.addEventListener(
+
+  "click",
+
+  ()=>{
+
+    lockLandscape();
+
+  },
+
+  {
+    once:true
+  }
+);
+
+/* =========================================
+JOGO
+========================================= */
+
+class SnakeChaos{
 
   constructor(){
 
     this.canvas =
-      document.getElementById("game");
+      document.getElementById(
+        "game"
+      );
 
     this.ctx =
       this.canvas.getContext("2d");
 
     this.grid = 25;
 
-    this.winScore = 300;
-
     this.score = 0;
-
-    this.baseSnakeSize = 3;
-
-    this.doublePoints = false;
-
-    this.reverseControls = false;
 
     this.speed = 60;
 
-    this.gameRunning = false;
-
-    this.loopRunning = false;
-
-    this.loopTimeout = null;
-
-    this.magicInterval = null;
-
-    this.countdownInterval = null;
-
-    this.modalTimerInterval = null;
+    this.gameRunning = true;
 
     this.snake = [
 
@@ -913,161 +980,27 @@ class SnakeChaos {
     ];
 
     this.dx = this.grid;
+
     this.dy = 0;
 
     this.food =
       this.randomPosition();
 
-    this.magicBox = null;
-
-    this.obstacles = [];
-
-    this.questions = [
-
-      {
-        question:"Qual linguagem roda no navegador?",
-
-        options:[
-          "JavaScript",
-          "Python",
-          "Java"
-        ],
-
-        correct:"JavaScript"
-      },
-
-      {
-        question:"HTML é usado para?",
-
-        options:[
-          "Estrutura",
-          "Banco de dados",
-          "Servidor"
-        ],
-
-        correct:"Estrutura"
-      },
-
-      {
-        question:"CSS serve para?",
-
-        options:[
-          "Estilizar",
-          "Compilar",
-          "Criptografar"
-        ],
-
-        correct:"Estilizar"
-      }
-
-    ];
-
-    this.createCountdown();
-
-    this.createObstacles();
-
-    this.init();
-
-    this.startMagicBoxSpawner();
-  }
-
-  init(){
+    this.updateUI();
 
     document.addEventListener(
+
       "keydown",
+
       (e)=>this.changeDirection(e)
     );
 
-    this.startCountdown(()=>{
-
-      this.gameRunning = true;
-
-      this.gameLoop();
-
-    });
-  }
-
-  createCountdown(){
-
-    const countdown =
-      document.createElement("div");
-
-    countdown.id = "countdown";
-
-    countdown.style.position = "fixed";
-    countdown.style.inset = "0";
-    countdown.style.display = "flex";
-    countdown.style.justifyContent = "center";
-    countdown.style.alignItems = "center";
-    countdown.style.fontSize = "8rem";
-    countdown.style.fontWeight = "900";
-    countdown.style.color = "white";
-    countdown.style.zIndex = "5000";
-    countdown.style.background = "rgba(0,0,0,.45)";
-    countdown.style.backdropFilter = "blur(8px)";
-    countdown.style.textShadow =
-      "0 0 30px rgba(56,189,248,.8)";
-    countdown.style.opacity = "0";
-    countdown.style.transition = ".3s";
-    countdown.style.pointerEvents = "none";
-
-    document.body.appendChild(
-      countdown
-    );
-  }
-
-  startCountdown(callback){
-
-    const countdown =
-      document.getElementById(
-        "countdown"
-      );
-
-    clearInterval(
-      this.countdownInterval
-    );
-
-    let count = 3;
-
-    countdown.style.opacity = "1";
-
-    countdown.textContent = count;
-
-    this.countdownInterval =
-      setInterval(()=>{
-
-        count--;
-
-        if(count > 0){
-
-          countdown.textContent =
-            count;
-
-        }else{
-
-          clearInterval(
-            this.countdownInterval
-          );
-
-          countdown.textContent =
-            "GO!";
-
-          setTimeout(()=>{
-
-            countdown.style.opacity =
-              "0";
-
-            callback();
-
-          },700);
-        }
-
-      },1000);
+    this.gameLoop();
   }
 
   randomPosition(){
 
-    return {
+    return{
 
       x:
         Math.floor(
@@ -1083,34 +1016,9 @@ class SnakeChaos {
     };
   }
 
-  createObstacles(){
-
-    for(let i=0;i<12;i++){
-
-      this.obstacles.push(
-        this.randomPosition()
-      );
-    }
-  }
-
   changeDirection(e){
 
-    let key = e.key;
-
-    if(this.reverseControls){
-
-      if(key === "ArrowRight")
-        key = "ArrowLeft";
-
-      else if(key === "ArrowLeft")
-        key = "ArrowRight";
-
-      else if(key === "ArrowUp")
-        key = "ArrowDown";
-
-      else if(key === "ArrowDown")
-        key = "ArrowUp";
-    }
+    const key = e.key;
 
     if(
       key === "ArrowUp" &&
@@ -1149,57 +1057,27 @@ class SnakeChaos {
     }
   }
 
-  gameLoop(){
-
-    if(this.loopRunning)
-      return;
-
-    this.loopRunning = true;
-
-    const loop = ()=>{
-
-      if(!this.gameRunning){
-
-        this.loopRunning = false;
-
-        return;
-      }
-
-      this.update();
-
-      this.draw();
-
-      this.loopTimeout = setTimeout(()=>{
-
-        requestAnimationFrame(loop);
-
-      },this.speed);
-    };
-
-    loop();
-  }
-
   update(){
-
-    if(this.score >= this.winScore){
-
-      this.winGame();
-
-      return;
-    }
 
     const head = {
 
-      x:this.snake[0].x + this.dx,
+      x:
+        this.snake[0].x + this.dx,
 
-      y:this.snake[0].y + this.dy
+      y:
+        this.snake[0].y + this.dy
     };
 
     if(
+
       head.x < 0 ||
+
       head.y < 0 ||
+
       head.x >= this.canvas.width ||
+
       head.y >= this.canvas.height
+
     ){
 
       this.gameOver();
@@ -1210,21 +1088,11 @@ class SnakeChaos {
     for(let part of this.snake){
 
       if(
+
         head.x === part.x &&
+
         head.y === part.y
-      ){
 
-        this.gameOver();
-
-        return;
-      }
-    }
-
-    for(let obstacle of this.obstacles){
-
-      if(
-        head.x === obstacle.x &&
-        head.y === obstacle.y
       ){
 
         this.gameOver();
@@ -1236,531 +1104,99 @@ class SnakeChaos {
     this.snake.unshift(head);
 
     if(
+
       head.x === this.food.x &&
+
       head.y === this.food.y
+
     ){
 
       this.food =
         this.randomPosition();
 
-      this.score +=
-        this.doublePoints
-        ? 20
-        : 10;
+      this.score += 10;
+
+      this.updateUI();
 
     }else{
 
       this.snake.pop();
     }
-
-    if(
-      this.magicBox &&
-      head.x === this.magicBox.x &&
-      head.y === this.magicBox.y
-    ){
-
-      this.magicBox = null;
-
-      this.openQuestion();
-    }
-
-    this.updateUI();
   }
 
   draw(){
 
     this.ctx.clearRect(
+
       0,
       0,
+
       this.canvas.width,
+
       this.canvas.height
     );
 
-    this.ctx.fillStyle = "#64748b";
-
-    this.obstacles.forEach((o)=>{
-
-      this.ctx.fillRect(
-        o.x,
-        o.y,
-        this.grid,
-        this.grid
-      );
-    });
-
-    this.ctx.fillStyle = "#ef4444";
+    this.ctx.fillStyle =
+      "#ef4444";
 
     this.ctx.beginPath();
 
     this.ctx.arc(
+
       this.food.x + 12,
+
       this.food.y + 12,
+
       10,
+
       0,
+
       Math.PI * 2
     );
 
     this.ctx.fill();
 
-    if(this.magicBox){
-
-      this.ctx.fillStyle = "#facc15";
-
-      this.ctx.fillRect(
-        this.magicBox.x,
-        this.magicBox.y,
-        this.grid,
-        this.grid
-      );
-    }
-
     this.snake.forEach((part,index)=>{
 
       this.ctx.fillStyle =
+
         index === 0
+
         ? "#22c55e"
+
         : "#16a34a";
 
       this.ctx.fillRect(
+
         part.x,
+
         part.y,
+
         this.grid,
+
         this.grid
       );
     });
   }
 
-  startMagicBoxSpawner(){
+  gameLoop(){
 
-    clearInterval(
-      this.magicInterval
-    );
+    if(!this.gameRunning)
+      return;
 
-    this.magicInterval =
-      setInterval(()=>{
+    this.update();
 
-        if(
-          this.magicBox ||
-          !this.gameRunning
-        ) return;
-
-        this.magicBox =
-          this.randomPosition();
-
-        setTimeout(()=>{
-
-          this.magicBox = null;
-
-        },5000);
-
-      },12000);
-  }
-
-  openQuestion(){
-
-    this.gameRunning = false;
-
-    this.loopRunning = false;
-
-    clearTimeout(
-      this.loopTimeout
-    );
-
-    clearInterval(
-      this.modalTimerInterval
-    );
-
-    const modal =
-      document.getElementById(
-        "questionModal"
-      );
-
-    modal.classList.add(
-      "active"
-    );
-
-    const q =
-      this.questions[
-        Math.floor(
-          Math.random() *
-          this.questions.length
-        )
-      ];
-
-    document.getElementById(
-      "questionText"
-    ).textContent =
-      q.question;
-
-    const optionsContainer =
-      document.getElementById(
-        "optionsContainer"
-      );
-
-    optionsContainer.innerHTML = "";
-
-    q.options.forEach((option)=>{
-
-      const btn =
-        document.createElement(
-          "button"
-        );
-
-      btn.className =
-        "option-btn";
-
-      btn.type = "button";
-
-      btn.textContent =
-        option;
-
-      btn.onclick = (e)=>{
-
-        e.preventDefault();
-
-        e.stopPropagation();
-
-        clearInterval(
-          this.modalTimerInterval
-        );
-
-        modal.classList.remove(
-          "active"
-        );
-
-        if(option === q.correct){
-
-          this.applyBuff();
-
-        }else{
-
-          this.applyDebuff();
-        }
-
-        this.loopRunning = false;
-
-        this.startCountdown(()=>{
-
-          this.gameRunning = true;
-
-          this.gameLoop();
-
-        });
-      };
-
-      optionsContainer.appendChild(
-        btn
-      );
-    });
-
-    let time = 8;
-
-    const bar =
-      document.getElementById(
-        "modalTimerBar"
-      );
-
-    bar.style.width = "100%";
-
-    this.modalTimerInterval =
-      setInterval(()=>{
-
-        time--;
-
-        bar.style.width =
-          `${(time / 8) * 100}%`;
-
-        if(time <= 0){
-
-          clearInterval(
-            this.modalTimerInterval
-          );
-
-          modal.classList.remove(
-            "active"
-          );
-
-          this.applyDebuff();
-
-          this.loopRunning = false;
-
-          this.startCountdown(()=>{
-
-            this.gameRunning = true;
-
-            this.gameLoop();
-
-          });
-        }
-
-      },1000);
-  }
-
-  showEffectPopup(success,text){
-
-    const popup =
-      document.getElementById(
-        "effectPopup"
-      );
-
-    const title =
-      document.getElementById(
-        "effectTitle"
-      );
-
-    const description =
-      document.getElementById(
-        "effectDescription"
-      );
-
-    popup.className =
-      "effect-popup";
-
-    popup.classList.add(
-      success
-      ? "success"
-      : "error"
-    );
-
-    title.textContent =
-      success
-      ? "✅ Resposta Correta!"
-      : "❌ Resposta Errada!";
-
-    description.textContent =
-      text;
-
-    popup.classList.add(
-      "active"
-    );
+    this.draw();
 
     setTimeout(()=>{
 
-      popup.classList.remove(
-        "active"
-      );
+      requestAnimationFrame(()=>{
 
-    },3500);
-  }
+        this.gameLoop();
 
-  applyBuff(){
+      });
 
-    const buffs = [
-
-      {
-
-        text:
-          "🐢 Cobra 10% mais lenta",
-
-        action:()=>{
-
-          this.speed =
-            Math.min(
-              this.speed * 1.1,
-              140
-            );
-        }
-      },
-
-      {
-
-        text:
-          "💥 Um obstáculo desapareceu",
-
-        action:()=>{
-
-          if(this.obstacles.length > 0){
-
-            this.obstacles.splice(
-
-              Math.floor(
-                Math.random() *
-                this.obstacles.length
-              ),
-
-              1
-            );
-          }
-        }
-      },
-
-      {
-
-        text:
-          "✂️ Cobra perdeu 20% do tamanho",
-
-        action:()=>{
-
-          const minimum =
-            this.baseSnakeSize;
-
-          const remove =
-            Math.floor(
-              this.snake.length * 0.2
-            );
-
-          if(
-            this.snake.length - remove >
-            minimum
-          ){
-
-            this.snake.splice(
-              this.snake.length - remove,
-              remove
-            );
-          }
-        }
-      },
-
-      {
-
-        text:
-          "✨ Pontuação dobrada por 15 segundos",
-
-        action:()=>{
-
-          this.doublePoints = true;
-
-          setTimeout(()=>{
-
-            this.doublePoints = false;
-
-          },15000);
-        }
-      }
-
-    ];
-
-    const selected =
-      buffs[
-        Math.floor(
-          Math.random() *
-          buffs.length
-        )
-      ];
-
-    selected.action();
-
-    this.showEffectPopup(
-      true,
-      selected.text
-    );
-  }
-
-  applyDebuff(){
-
-    const debuffs = [
-
-      {
-
-        text:
-          "⚡ Cobra 30% mais rápida",
-
-        action:()=>{
-
-          this.speed =
-            Math.max(
-              this.speed * 0.7,
-              25
-            );
-        }
-      },
-
-      {
-
-        text:
-          "🌀 Controles invertidos por 15 segundos",
-
-        action:()=>{
-
-          this.reverseControls =
-            true;
-
-          setTimeout(()=>{
-
-            this.reverseControls =
-              false;
-
-          },15000);
-        }
-      },
-
-      {
-
-        text:
-          "🐍 Cobra aumentou 50%",
-
-        action:()=>{
-
-          const grow =
-            Math.floor(
-              this.snake.length * 0.5
-            );
-
-          for(let i=0;i<grow;i++){
-
-            this.snake.push({
-
-              ...this.snake[
-                this.snake.length - 1
-              ]
-
-            });
-          }
-        }
-      },
-
-      {
-
-        text:
-          "🌑 Tela escurecendo constantemente",
-
-        action:()=>{
-
-          const darkness =
-            document.getElementById(
-              "darkness"
-            );
-
-          const interval =
-            setInterval(()=>{
-
-              darkness.style.opacity = 1;
-
-              setTimeout(()=>{
-
-                darkness.style.opacity = 0;
-
-              },2000);
-
-            },5000);
-
-          setTimeout(()=>{
-
-            clearInterval(interval);
-
-            darkness.style.opacity = 0;
-
-          },25000);
-        }
-      }
-
-    ];
-
-    const selected =
-      debuffs[
-        Math.floor(
-          Math.random() *
-          debuffs.length
-        )
-      ];
-
-    selected.action();
-
-    this.showEffectPopup(
-      false,
-      selected.text
-    );
+    },this.speed);
   }
 
   updateUI(){
@@ -1780,24 +1216,6 @@ class SnakeChaos {
 
     this.gameRunning = false;
 
-    this.loopRunning = false;
-
-    clearTimeout(
-      this.loopTimeout
-    );
-
-    clearInterval(
-      this.magicInterval
-    );
-
-    clearInterval(
-      this.modalTimerInterval
-    );
-
-    clearInterval(
-      this.countdownInterval
-    );
-
     const overlay =
       document.getElementById(
         "overlay"
@@ -1807,76 +1225,13 @@ class SnakeChaos {
       "active"
     );
 
-    document.querySelector(
-      ".overlay h1"
-    ).innerHTML =
-      "💀 GAME OVER";
-
     document.getElementById(
       "finalScore"
     ).innerHTML =
 
       `
-      Pontuação final:
+      Pontuação:
       ${this.score}
-      `;
-  }
-
-  winGame(){
-
-    this.gameRunning = false;
-
-    this.loopRunning = false;
-
-    clearTimeout(
-      this.loopTimeout
-    );
-
-    clearInterval(
-      this.magicInterval
-    );
-
-    clearInterval(
-      this.modalTimerInterval
-    );
-
-    clearInterval(
-      this.countdownInterval
-    );
-
-    const overlay =
-      document.getElementById(
-        "overlay"
-      );
-
-    overlay.classList.add(
-      "active"
-    );
-
-    document.querySelector(
-      ".overlay h1"
-    ).innerHTML =
-      "🏆 PARABÉNS!";
-
-    document.getElementById(
-      "finalScore"
-    ).innerHTML =
-
-      `
-      Você completou o desafio!
-      <br><br>
-
-      Código desbloqueado:
-      <br><br>
-
-      <strong style="
-        font-size:3rem;
-        color:#38bdf8;
-        text-shadow:
-          0 0 25px rgba(56,189,248,.8);
-      ">
-        Testes
-      </strong>
       `;
   }
 }
