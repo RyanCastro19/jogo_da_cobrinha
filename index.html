@@ -132,6 +132,8 @@ GAME CONTAINER
 
   animation:
     shine 6s linear infinite;
+
+  pointer-events:none;
 }
 
 @keyframes shine{
@@ -296,6 +298,7 @@ MODAL
   align-items:center;
 
   opacity:0;
+
   pointer-events:none;
 
   transition:.3s;
@@ -306,6 +309,7 @@ MODAL
 .modal.active{
 
   opacity:1;
+
   pointer-events:all;
 }
 
@@ -447,6 +451,8 @@ OPTIONS
 
   top:-90px;
   right:-90px;
+
+  pointer-events:none;
 }
 
 .option-btn:nth-child(1){
@@ -514,6 +520,7 @@ OVERLAY
   gap:20px;
 
   opacity:0;
+
   pointer-events:none;
 
   transition:.3s;
@@ -524,6 +531,7 @@ OVERLAY
 .overlay.active{
 
   opacity:1;
+
   pointer-events:all;
 }
 
@@ -590,7 +598,7 @@ OVERLAY
 }
 
 /* =========================================
-POPUP EFEITO
+POPUP
 ========================================= */
 
 .effect-popup{
@@ -690,6 +698,14 @@ DARKNESS
   transition:.5s;
 
   z-index:1500;
+}
+
+/* =========================================
+COUNTDOWN
+========================================= */
+
+#countdown{
+  pointer-events:none;
 }
 
 /* =========================================
@@ -851,7 +867,8 @@ CELULAR
 </div>
 
 <script>
-    class SnakeChaos {
+
+class SnakeChaos {
 
   constructor(){
 
@@ -877,13 +894,15 @@ CELULAR
 
     this.gameRunning = false;
 
-    /*
-    evita múltiplos loops
-    */
-
     this.loopRunning = false;
 
     this.loopTimeout = null;
+
+    this.magicInterval = null;
+
+    this.countdownInterval = null;
+
+    this.modalTimerInterval = null;
 
     this.snake = [
 
@@ -952,10 +971,6 @@ CELULAR
     this.startMagicBoxSpawner();
   }
 
-  /* =========================================
-  INIT
-  ========================================= */
-
   init(){
 
     document.addEventListener(
@@ -971,10 +986,6 @@ CELULAR
 
     });
   }
-
-  /* =========================================
-  CONTAGEM
-  ========================================= */
 
   createCountdown(){
 
@@ -998,6 +1009,7 @@ CELULAR
       "0 0 30px rgba(56,189,248,.8)";
     countdown.style.opacity = "0";
     countdown.style.transition = ".3s";
+    countdown.style.pointerEvents = "none";
 
     document.body.appendChild(
       countdown
@@ -1011,13 +1023,17 @@ CELULAR
         "countdown"
       );
 
+    clearInterval(
+      this.countdownInterval
+    );
+
     let count = 3;
 
     countdown.style.opacity = "1";
 
     countdown.textContent = count;
 
-    const interval =
+    this.countdownInterval =
       setInterval(()=>{
 
         count--;
@@ -1029,7 +1045,9 @@ CELULAR
 
         }else{
 
-          clearInterval(interval);
+          clearInterval(
+            this.countdownInterval
+          );
 
           countdown.textContent =
             "GO!";
@@ -1046,10 +1064,6 @@ CELULAR
 
       },1000);
   }
-
-  /* =========================================
-  POSIÇÃO
-  ========================================= */
 
   randomPosition(){
 
@@ -1069,10 +1083,6 @@ CELULAR
     };
   }
 
-  /* =========================================
-  OBSTÁCULOS
-  ========================================= */
-
   createObstacles(){
 
     for(let i=0;i<12;i++){
@@ -1082,10 +1092,6 @@ CELULAR
       );
     }
   }
-
-  /* =========================================
-  DIREÇÃO
-  ========================================= */
 
   changeDirection(e){
 
@@ -1143,10 +1149,6 @@ CELULAR
     }
   }
 
-  /* =========================================
-  LOOP
-  ========================================= */
-
   gameLoop(){
 
     if(this.loopRunning)
@@ -1177,15 +1179,7 @@ CELULAR
     loop();
   }
 
-  /* =========================================
-  UPDATE
-  ========================================= */
-
   update(){
-
-    /*
-    vitória
-    */
 
     if(this.score >= this.winScore){
 
@@ -1201,10 +1195,6 @@ CELULAR
       y:this.snake[0].y + this.dy
     };
 
-    /*
-    parede
-    */
-
     if(
       head.x < 0 ||
       head.y < 0 ||
@@ -1216,10 +1206,6 @@ CELULAR
 
       return;
     }
-
-    /*
-    corpo
-    */
 
     for(let part of this.snake){
 
@@ -1233,10 +1219,6 @@ CELULAR
         return;
       }
     }
-
-    /*
-    obstáculos
-    */
 
     for(let obstacle of this.obstacles){
 
@@ -1252,10 +1234,6 @@ CELULAR
     }
 
     this.snake.unshift(head);
-
-    /*
-    fruta
-    */
 
     if(
       head.x === this.food.x &&
@@ -1275,10 +1253,6 @@ CELULAR
       this.snake.pop();
     }
 
-    /*
-    caixa mágica
-    */
-
     if(
       this.magicBox &&
       head.x === this.magicBox.x &&
@@ -1293,10 +1267,6 @@ CELULAR
     this.updateUI();
   }
 
-  /* =========================================
-  DRAW
-  ========================================= */
-
   draw(){
 
     this.ctx.clearRect(
@@ -1305,10 +1275,6 @@ CELULAR
       this.canvas.width,
       this.canvas.height
     );
-
-    /*
-    obstáculos
-    */
 
     this.ctx.fillStyle = "#64748b";
 
@@ -1321,10 +1287,6 @@ CELULAR
         this.grid
       );
     });
-
-    /*
-    fruta
-    */
 
     this.ctx.fillStyle = "#ef4444";
 
@@ -1340,10 +1302,6 @@ CELULAR
 
     this.ctx.fill();
 
-    /*
-    caixa mágica
-    */
-
     if(this.magicBox){
 
       this.ctx.fillStyle = "#facc15";
@@ -1355,10 +1313,6 @@ CELULAR
         this.grid
       );
     }
-
-    /*
-    cobra
-    */
 
     this.snake.forEach((part,index)=>{
 
@@ -1376,47 +1330,54 @@ CELULAR
     });
   }
 
-  /* =========================================
-  MAGIC BOX
-  ========================================= */
-
   startMagicBoxSpawner(){
 
-    setInterval(()=>{
+    clearInterval(
+      this.magicInterval
+    );
 
-      if(
-        this.magicBox ||
-        !this.gameRunning
-      ) return;
+    this.magicInterval =
+      setInterval(()=>{
 
-      this.magicBox =
-        this.randomPosition();
+        if(
+          this.magicBox ||
+          !this.gameRunning
+        ) return;
 
-      setTimeout(()=>{
+        this.magicBox =
+          this.randomPosition();
 
-        this.magicBox = null;
+        setTimeout(()=>{
 
-      },5000);
+          this.magicBox = null;
 
-    },12000);
+        },5000);
+
+      },12000);
   }
-
-  /* =========================================
-  MODAL
-  ========================================= */
 
   openQuestion(){
 
     this.gameRunning = false;
 
-    clearTimeout(this.loopTimeout);
+    this.loopRunning = false;
+
+    clearTimeout(
+      this.loopTimeout
+    );
+
+    clearInterval(
+      this.modalTimerInterval
+    );
 
     const modal =
       document.getElementById(
         "questionModal"
       );
 
-    modal.classList.add("active");
+    modal.classList.add(
+      "active"
+    );
 
     const q =
       this.questions[
@@ -1441,17 +1402,27 @@ CELULAR
     q.options.forEach((option)=>{
 
       const btn =
-        document.createElement("button");
+        document.createElement(
+          "button"
+        );
 
       btn.className =
         "option-btn";
 
+      btn.type = "button";
+
       btn.textContent =
         option;
 
-      btn.onclick = ()=>{
+      btn.onclick = (e)=>{
 
-        clearInterval(timer);
+        e.preventDefault();
+
+        e.stopPropagation();
+
+        clearInterval(
+          this.modalTimerInterval
+        );
 
         modal.classList.remove(
           "active"
@@ -1465,6 +1436,8 @@ CELULAR
 
           this.applyDebuff();
         }
+
+        this.loopRunning = false;
 
         this.startCountdown(()=>{
 
@@ -1480,10 +1453,6 @@ CELULAR
       );
     });
 
-    /*
-    timer
-    */
-
     let time = 8;
 
     const bar =
@@ -1493,7 +1462,7 @@ CELULAR
 
     bar.style.width = "100%";
 
-    const timer =
+    this.modalTimerInterval =
       setInterval(()=>{
 
         time--;
@@ -1503,13 +1472,17 @@ CELULAR
 
         if(time <= 0){
 
-          clearInterval(timer);
+          clearInterval(
+            this.modalTimerInterval
+          );
 
           modal.classList.remove(
             "active"
           );
 
           this.applyDebuff();
+
+          this.loopRunning = false;
 
           this.startCountdown(()=>{
 
@@ -1522,10 +1495,6 @@ CELULAR
 
       },1000);
   }
-
-  /* =========================================
-  POPUP
-  ========================================= */
 
   showEffectPopup(success,text){
 
@@ -1573,10 +1542,6 @@ CELULAR
 
     },3500);
   }
-
-  /* =========================================
-  BENEFÍCIOS
-  ========================================= */
 
   applyBuff(){
 
@@ -1681,10 +1646,6 @@ CELULAR
       selected.text
     );
   }
-
-  /* =========================================
-  MALEFÍCIOS
-  ========================================= */
 
   applyDebuff(){
 
@@ -1802,10 +1763,6 @@ CELULAR
     );
   }
 
-  /* =========================================
-  UI
-  ========================================= */
-
   updateUI(){
 
     document.getElementById(
@@ -1819,15 +1776,27 @@ CELULAR
       this.snake.length;
   }
 
-  /* =========================================
-  GAME OVER
-  ========================================= */
-
   gameOver(){
 
     this.gameRunning = false;
 
-    clearTimeout(this.loopTimeout);
+    this.loopRunning = false;
+
+    clearTimeout(
+      this.loopTimeout
+    );
+
+    clearInterval(
+      this.magicInterval
+    );
+
+    clearInterval(
+      this.modalTimerInterval
+    );
+
+    clearInterval(
+      this.countdownInterval
+    );
 
     const overlay =
       document.getElementById(
@@ -1853,15 +1822,27 @@ CELULAR
       `;
   }
 
-  /* =========================================
-  VITÓRIA
-  ========================================= */
-
   winGame(){
 
     this.gameRunning = false;
 
-    clearTimeout(this.loopTimeout);
+    this.loopRunning = false;
+
+    clearTimeout(
+      this.loopTimeout
+    );
+
+    clearInterval(
+      this.magicInterval
+    );
+
+    clearInterval(
+      this.modalTimerInterval
+    );
+
+    clearInterval(
+      this.countdownInterval
+    );
 
     const overlay =
       document.getElementById(
@@ -1901,6 +1882,7 @@ CELULAR
 }
 
 new SnakeChaos();
+
 </script>
 </body>
 </html>
